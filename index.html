@@ -1,126 +1,151 @@
 <!doctype html>
 <html lang="en">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://kit.fontawesome.com/0d08703d1a.js" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/htmx.org@1.9.6"
-    integrity="sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni"
-    crossorigin="anonymous"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          keyframes: {
-            slideInFromBottom: {
-              "0%": {
-                transform: "translateY(2rem)",
-                opacity: "0",
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script
+      src="https://kit.fontawesome.com/0d08703d1a.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://unpkg.com/htmx.org@1.9.6"
+      integrity="sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            keyframes: {
+              slideInFromBottom: {
+                "0%": {
+                  transform: "translateY(2rem)",
+                  opacity: "0",
+                },
+                "100%": {
+                  transform: "translateY(0rem)",
+                  opacity: "1",
+                },
               },
-              "100%": {
-                transform: "translateY(0rem)",
-                opacity: "1",
+              textFocus: {
+                "0%": {
+                  filter: "blur(12px)",
+                  opacity: "0",
+                },
+                "100%": {
+                  filter: "blur(0px)",
+                  opacity: "1",
+                },
+              },
+              fadeIn: {
+                "0%": {
+                  opacity: "0",
+                },
+                "100%": {
+                  opacity: "1",
+                },
+              },
+              jumpingDots: {
+                "10%": {
+                  transform: "translateY(0px)",
+                },
+                "50%": {
+                  transform: "translateY(-20px)",
+                },
               },
             },
-            textFocus: {
-              "0%": {
-                filter: "blur(12px)",
-                opacity: "0",
-              },
-              "100%": {
-                filter: "blur(0px)",
-                opacity: "1",
-              },
+            animation: {
+              slideInFromBottom: "slideInFromBottom 0.2s ease-in-out",
+              textFocus: "textFocus 0.2s ease-in-out",
+              fadeIn: "fadeIn 0.5s ease-in-out",
             },
-            fadeIn: {
-              "0%": {
-                opacity: "0",
-              },
-              "100%": {
-                opacity: "1",
-              },
-            },
-            jumpingDots: {
-              "10%": {
-                transform: "translateY(0px)",
-              },
-              "50%": {
-                transform: "translateY(-20px)",
-              },
-            },
-          },
-          animation: {
-            slideInFromBottom: "slideInFromBottom 0.4s ease-in-out",
-            textFocus: "textFocus 0.6s ease-in-out",
-            fadeIn: "fadeIn 0.5s ease-in-out",
           },
         },
-      },
-    };
-  </script>
-  <title>Asset Manager</title>
-</head>
+      };
+    </script>
+    <title>Asset Manager</title>
+  </head>
 
-<body class="overflow-hidden">
-  <div id="portal" class="relative z-10"></div>
-  <h1 class="p-8 text-4xl text-gray-500 animate-textFocus">Asset Manager</h1>
-  <div class="px-8">
-    <div
-      class="overflow-y-auto border border-gray-400 lg:overflow-x-hidden max-w-[98vw] animate-slideInFromBottom max-h-[80vh]">
-      <table class="w-full text-xs">
-        <thead class="sticky top-0 text-gray-200 bg-gray-800">
-          <tr>
-            <th class="py-2 px-2 hover:bg-gray-700 text-start">Actions</th>
-            <th class="py-4 px-2 hover:bg-gray-700 text-start">Name</th>
-            <th class="py-4 px-2 hover:bg-gray-700 text-start">Serial</th>
-            <th class="py-4 px-2 hover:bg-gray-700 text-start">Email</th>
-            <th class="py-4 px-2 hover:bg-gray-700 text-start">Country</th>
-            <th class="py-4 px-2 hover:bg-gray-700 text-start">
-              Asset Serial
-            </th>
-            <th class="py-4 px-2 hover:bg-gray-700 text-start">Asset Type</th>
-            <th class="py-4 px-2 hover:bg-gray-700 text-start">
-              Expiration Date
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {{range .}}
-          <tr id="`row-{{.AssetSerial}}`" class="border border-gray-400 hover:bg-gray-200">
-            <td class="py-2 px-2">
-              <div class="flex flex-row space-x-4">
-                <button hx-get="/assets/{{.AssetSerial}}/">
-                  <i class="text-blue-300 fa-solid fa-magnifying-glass fa-xl"></i>
-                </button>
-                <button hx-put="/assets/{{.AssetSerial}}/" hx-target="#portal" hx-swap="innerHTML">
-                  <i class="text-gray-600 fa-solid fa-pencil fa-xl"></i>
-                </button>
-                <button hx-delete="/assets/{{.AssetSerial}}/" hx-confirm="Are you sure you wish to delete this asset?"
-                  hx-target="closest tr">
-                  <i class="text-pink-700 fa-solid fa-trash-can fa-xl"></i>
-                </button>
-              </div>
-            </td>
-            <td class="py-2 px-2">{{.Name}}</td>
-            <td class="py-2 px-2">{{.Serial}}</td>
-            <td class="py-2 px-2">{{.Email}}</td>
-            <td class="py-2 px-2">{{.Country}}</td>
-            <td class="py-2 px-2">{{.AssetSerial}}</td>
-            <td class="py-2 px-2">
-              {{if eq .AssetType "Mac" }}<i title="Mac" class="fa-brands fa-apple fa-xl"></i>
-              {{end}} {{if eq .AssetType "Laptop" }}<i title="Laptop" class="fa-solid fa-laptop fa-xl"></i>
-              {{end}} {{if eq .AssetType "Desktop" }}<i title="Desktop" class="fa-solid fa-desktop fa-xl"></i>
-              {{end}}
-            </td>
-            <td class="py-2 px-2">{{.ExpirationDate}}</td>
-          </tr>
-          {{end}}
-        </tbody>
-      </table>
+  <body class="overflow-hidden">
+    <div id="portal" class="relative z-10"></div>
+    <h1 class="p-8 text-4xl text-gray-500 animate-textFocus">Asset Manager</h1>
+    <div class="px-8">
+      <div
+        class="overflow-y-auto border border-gray-400 lg:overflow-x-hidden max-w-[98vw] animate-slideInFromBottom max-h-[80vh]"
+      >
+        <table class="w-full text-xs">
+          <thead class="sticky top-0 text-gray-200 bg-gray-800">
+            <tr>
+              <th class="py-2 px-2 hover:bg-gray-700 text-start">Actions</th>
+              <th class="py-4 px-2 hover:bg-gray-700 text-start">Name</th>
+              <th class="py-4 px-2 hover:bg-gray-700 text-start">Serial</th>
+              <th class="py-4 px-2 hover:bg-gray-700 text-start">Email</th>
+              <th class="py-4 px-2 hover:bg-gray-700 text-start">Country</th>
+              <th class="py-4 px-2 hover:bg-gray-700 text-start">
+                Asset Serial
+              </th>
+              <th class="py-4 px-2 hover:bg-gray-700 text-start">Asset Type</th>
+              <th class="py-4 px-2 hover:bg-gray-700 text-start">
+                Expiration Date
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {{range .}}
+            <tr
+              id="`row-{{.AssetSerial}}`"
+              class="border border-gray-400 hover:bg-gray-200"
+            >
+              <td class="py-2 px-2">
+                <div class="flex flex-row space-x-4">
+                  <button hx-get="/assets/{{.AssetSerial}}/">
+                    <i
+                      class="text-blue-300 fa-solid fa-magnifying-glass fa-xl"
+                    ></i>
+                  </button>
+                  <button
+                    hx-put="/assets/{{.AssetSerial}}/"
+                    hx-target="#portal"
+                    hx-swap="innerHTML"
+                  >
+                    <i class="text-gray-600 fa-solid fa-pencil fa-xl"></i>
+                  </button>
+                  <button
+                    hx-delete="/assets/{{.AssetSerial}}/"
+                    hx-confirm="Are you sure you wish to delete this asset?"
+                    hx-target="closest tr"
+                  >
+                    <i class="text-pink-700 fa-solid fa-trash-can fa-xl"></i>
+                  </button>
+                </div>
+              </td>
+              <td class="py-2 px-2">{{.Name}}</td>
+              <td class="py-2 px-2">{{.Serial}}</td>
+              <td class="py-2 px-2">{{.Email}}</td>
+              <td class="py-2 px-2">{{.Country}}</td>
+              <td class="py-2 px-2">{{.AssetSerial}}</td>
+              <td class="py-2 px-2">
+                {{if eq .AssetType "Mac" }}<i
+                  title="Mac"
+                  class="fa-brands fa-apple fa-xl"
+                ></i>
+                {{end}} {{if eq .AssetType "Laptop" }}<i
+                  title="Laptop"
+                  class="fa-solid fa-laptop fa-xl"
+                ></i>
+                {{end}} {{if eq .AssetType "Desktop" }}<i
+                  title="Desktop"
+                  class="fa-solid fa-desktop fa-xl"
+                ></i>
+                {{end}}
+              </td>
+              <td class="py-2 px-2">{{.ExpirationDate}}</td>
+            </tr>
+            {{end}}
+          </tbody>
+        </table>
+      </div>
     </div>
-  </div>
-</body>
-
+  </body>
 </html>
