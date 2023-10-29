@@ -40,8 +40,17 @@ func AssetHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	if r.Method == "PUT" {
+		vars := mux.Vars(r)
+		id := vars["id"]
+
+		var row Data
+		for i, asset := range payload {
+			if asset.AssetSerial == id {
+				row = payload[i]
+			}
+		}
 		tmpl, _ := template.ParseFiles("../insert.html")
-		tmpl.Execute(w, payload)
+		tmpl.Execute(w, row)
 	}
 }
 
