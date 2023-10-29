@@ -36,6 +36,7 @@ func AssetHandler(w http.ResponseWriter, r *http.Request) {
 		for i, asset := range payload {
 			if asset.AssetSerial == id {
 				payload = append(payload[:i], payload[i+1:]...)
+				break
 			}
 		}
 	}
@@ -43,10 +44,31 @@ func AssetHandler(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		id := vars["id"]
 
+		for i, asset := range payload {
+			if asset.AssetSerial == id {
+				payload[i].Name = r.FormValue("name")
+				payload[i].Serial = r.FormValue("serial")
+				payload[i].Email = r.FormValue("email")
+				payload[i].Country = r.FormValue("country")
+				payload[i].AssetSerial = r.FormValue("asset_serial")
+				payload[i].AssetType = r.FormValue("asset_type")
+				payload[i].ExpirationDate = r.FormValue("expiration_date")
+				break
+			}
+		}
+	}
+}
+
+func EditHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "GET" {
+		vars := mux.Vars(r)
+		id := vars["id"]
+
 		var row Data
 		for i, asset := range payload {
 			if asset.AssetSerial == id {
 				row = payload[i]
+				break
 			}
 		}
 		tmpl, _ := template.ParseFiles("../insert.html")
@@ -67,8 +89,8 @@ func main() {
 	router := mux.NewRouter()
 
 	router.HandleFunc("/", HomeHandler)
-
-	router.HandleFunc("/assets/{id}/", AssetHandler)
+	router.HandleFunc("/assets/{id}", AssetHandler)
+	router.HandleFunc("/assets/{id}/edit", EditHandler)
 
 	http.Handle("/", router)
 
