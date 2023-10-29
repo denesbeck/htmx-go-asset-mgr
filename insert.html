@@ -1,0 +1,51 @@
+<div id="insert-modal"
+  class="inline-flex overflow-hidden absolute top-0 left-0 justify-center items-center w-full min-h-screen min-w-screen backdrop-blur-sm bg-gray-900/50">
+  <modal class="p-4 bg-white rounded-md border boder-gray-400 animate-slideInFromBottom">
+    <h1 class="mb-6 text-3xl text-gray-500">Update Asset Information</h1>
+    <form id="insert" hx-post="/assets/">
+      <div class="flex overflow-auto flex-col px-4 mb-8 space-y-2 max-h-[60vh]">
+        <div class="flex flex-col space-y-1">
+          <label for="name">Name</label>
+          <input id="name" name="name" type="text" class="rounded border border-gray-400 h-[2rem]" />
+        </div>
+        <div class="flex flex-col space-y-1">
+          <label for="serial">Serial</label>
+          <input id="serial" name="serial" type="text" class="rounded border border-gray-400 h-[2rem]" />
+        </div>
+        <div class="flex flex-col space-y-1">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="text" class="rounded border border-gray-400 h-[2rem]" />
+        </div>
+        <div class="flex flex-col space-y-1">
+          <label for="country">Country</label>
+          <input id="country" name="country" type="text" class="rounded border border-gray-400 h-[2rem]" />
+        </div>
+        <div class="flex flex-col space-y-1">
+          <label for="assetserial">Asset Serial</label>
+          <input id="assetserial" name="assetserial" type="text" class="rounded border border-gray-400 h-[2rem]" />
+        </div>
+        <div class="flex flex-col space-y-1">
+          <label for="assettype">Asset Type</label>
+          <select id="assettype" name="assettype" class="rounded-md border border-gray-400">
+            <option value="Mac">Mac</option>
+            <option value="Laptop">Laptop</option>
+            <option value="Desktop">Desktop</option>
+          </select>
+        </div>
+        <div class="flex flex-col space-y-1">
+          <label for="expirationdate">Expiration Date</label>
+          <input id="expirationdate" name="expirationdate" type="date" class="rounded-md border border-gray-400" />
+        </div>
+      </div>
+      <div class="flex flex-row px-4 space-x-4">
+        <button type="submit" class="py-2 px-4 text-white bg-blue-500 rounded-md">
+          Insert
+        </button>
+        <button type="button" hx-get="/" hx-swap="delete" hx-target="#insert-modal"
+          class="py-2 px-4 text-white bg-gray-500 rounded-md">
+          Cancel
+        </button>
+      </div>
+    </form>
+</div>
+</div>
