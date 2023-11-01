@@ -50,9 +50,12 @@ func AssetHandler(w http.ResponseWriter, r *http.Request) {
 				payload[i].Serial = r.FormValue("serial")
 				payload[i].Email = r.FormValue("email")
 				payload[i].Country = r.FormValue("country")
-				payload[i].AssetSerial = r.FormValue("asset_serial")
-				payload[i].AssetType = r.FormValue("asset_type")
-				payload[i].ExpirationDate = r.FormValue("expiration_date")
+				payload[i].AssetSerial = r.FormValue("assetserial")
+				payload[i].AssetType = r.FormValue("assettype")
+				payload[i].ExpirationDate = r.FormValue("expirationdate")
+
+				tmpl := template.Must(template.ParseFiles("../index.html"))
+				tmpl.ExecuteTemplate(w, "assets-rows", payload[i])
 				break
 			}
 		}
