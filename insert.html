@@ -1,8 +1,16 @@
+<script>
+  htmx.on("htmx:afterRequest", function (evt) {
+    if (evt.detail.elt.id === "insert-form") {
+      document.getElementById("insert-modal").classList.remove("flex");
+      document.getElementById("insert-modal").classList.add("hidden");
+    }
+  });
+</script>
 <div id="insert-modal"
   class="inline-flex overflow-hidden absolute top-0 left-0 justify-center items-center w-full min-h-screen min-w-screen backdrop-blur-sm bg-gray-900/50">
   <modal class="p-4 bg-white rounded-md border boder-gray-400 animate-slideInFromBottom">
     <h1 class="mb-6 text-3xl text-gray-500">Update Asset Information</h1>
-    <form id="insert" hx-post="/assets/">
+    <form id="insert-form" hx-put="/assets/{{.AssetSerial}}" hx-target="#row-{{.AssetSerial}}" hx-swap="outerHTML">
       <div class="flex overflow-auto flex-col py-1 px-4 mb-8 space-y-2 max-h-[60vh]">
         <div class="flex flex-col space-y-1">
           <label for="name">Name</label>
@@ -45,14 +53,12 @@
         </div>
       </div>
       <div class="flex flex-row px-4 space-x-4">
-        <button type="submit" class="py-2 px-4 text-white bg-blue-500 rounded-md">
-          Save
-        </button>
-        <button type="button" hx-get="/" hx-swap="delete" hx-target="#insert-modal"
+        <button type="submit" class="py-2 px-4 text-white bg-blue-500 rounded-md">Save</button>
+        <button hx-get="/" hx-swap="delete" hx-target="#insert-modal"
           class="py-2 px-4 text-white bg-gray-500 rounded-md">
           Cancel
         </button>
       </div>
     </form>
-</div>
+  </modal>
 </div>
