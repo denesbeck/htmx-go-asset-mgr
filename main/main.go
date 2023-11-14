@@ -21,6 +21,11 @@ type Data struct {
 	ExpirationDate string `json:"expiration_date"`
 }
 
+type Params struct {
+	Type string
+	Data Data
+}
+
 var payload []Data
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
@@ -28,7 +33,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl.Execute(w, payload)
 }
 
-func AssetHandler(w http.ResponseWriter, r *http.Request) {
+func DeleteHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "DELETE" {
 		vars := mux.Vars(r)
 		id := vars["id"]
@@ -40,6 +45,26 @@ func AssetHandler(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
+}
+
+func EditHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "GET" {
+		vars := mux.Vars(r)
+		id := vars["id"]
+
+		var row Data
+		for i, asset := range payload {
+			if asset.AssetSerial == id {
+				row = payload[i]
+				break
+			}
+		}
+		tmpl, _ := template.ParseFiles("../insert.html")
+		tmpl.Execute(w, Params{Type: "edit", Data: row})
+	}
+}
+
+func UpdateHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "PUT" {
 		vars := mux.Vars(r)
 		id := vars["id"]
@@ -62,20 +87,27 @@ func AssetHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func EditHandler(w http.ResponseWriter, r *http.Request) {
+func NewHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
-		vars := mux.Vars(r)
-		id := vars["id"]
-
-		var row Data
-		for i, asset := range payload {
-			if asset.AssetSerial == id {
-				row = payload[i]
-				break
-			}
-		}
 		tmpl, _ := template.ParseFiles("../insert.html")
-		tmpl.Execute(w, row)
+		tmpl.Execute(w, Params{Type: "new"})
+	}
+}
+
+func CreateHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+		payload = append(payload, Data{})
+		i := len(payload) - 1
+		payload[i].Name = r.FormValue("name")
+		payload[i].Serial = r.FormValue("serial")
+		payload[i].Email = r.FormValue("email")
+		payload[i].Country = r.FormValue("country")
+		payload[i].AssetSerial = r.FormValue("assetserial")
+		payload[i].AssetType = r.FormValue("assettype")
+		payload[i].ExpirationDate = r.FormValue("expirationdate")
+
+		tmpl := template.Must(template.ParseFiles("../index.html"))
+		tmpl.ExecuteTemplate(w, "assets-rows", payload[i])
 	}
 }
 
@@ -92,11 +124,14 @@ func main() {
 	router := mux.NewRouter()
 
 	router.HandleFunc("/", HomeHandler)
-	router.HandleFunc("/assets/{id}", AssetHandler)
+	router.HandleFunc("/assets/new", NewHandler)
+	router.HandleFunc("/assets/create", CreateHandler)
+	router.HandleFunc("/assets/{id}", DeleteHandler)
 	router.HandleFunc("/assets/{id}/edit", EditHandler)
+	router.HandleFunc("/assets/{id}/update", UpdateHandler)
 
 	http.Handle("/", router)
 
-	fmt.Println("Server is listening...")
+	fmt.Println("Server is listening at http://localhost:8080...")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
