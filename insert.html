@@ -9,56 +9,63 @@
 <div id="insert-modal"
   class="inline-flex overflow-hidden absolute top-0 left-0 justify-center items-center w-full min-h-screen min-w-screen backdrop-blur-sm bg-gray-900/50">
   <modal class="p-4 bg-white rounded-md border boder-gray-400 animate-slideInFromBottom">
-    <h1 class="mb-6 text-3xl text-gray-500">Update Asset Information</h1>
-    <form id="insert-form" hx-put="/assets/{{.AssetSerial}}" hx-target="#row-{{.AssetSerial}}" hx-swap="outerHTML">
-      <div class="flex overflow-auto flex-col py-1 px-4 mb-8 space-y-2 max-h-[60vh]">
-        <div class="flex flex-col space-y-1">
-          <label for="name">Name</label>
-          <input value={{.Name}} id="name" name="name" type="text"
-            class="px-2 rounded border border-gray-400 h-[2rem]" />
+    <h1 class="mb-6 text-3xl text-gray-500">{{if eq .Type "edit"}}Update Asset Information{{else}}Register
+      Asset{{end}}</h1>
+    {{if eq .Type "edit"}}
+    <form id="insert-form" hx-put="/assets/{{.Data.AssetSerial}}/update" hx-target="#row-{{.Data.AssetSerial}}"
+      hx-swap="outerHTML">
+      {{else}}
+      <form id="insert-form" hx-post="/assets/create" hx-target="#table-body" hx-swap="afterbegin">
+        {{end}}
+        <div class="flex overflow-auto flex-col py-1 px-4 mb-8 space-y-2 max-h-[60vh]">
+          <div class="flex flex-col space-y-1">
+            <label for="name">Name</label>
+            <input {{if .Data.Name }} value={{.Data.Name}} {{end}} id="name" name="name" type="text"
+              class="px-2 rounded border border-gray-400 h-[2rem]" />
+          </div>
+          <div class="flex flex-col space-y-1">
+            <label for="serial">Serial</label>
+            <input {{if .Data.Serial}} value={{.Data.Serial}} {{end}} id="serial" name="serial" type="text"
+              class="px-2 rounded border border-gray-400 h-[2rem]" />
+          </div>
+          <div class="flex flex-col space-y-1">
+            <label for="email">Email</label>
+            <input {{if .Data.Email}} value={{.Data.Email}} {{end}} id="email" name="email" type="text"
+              class="px-2 rounded border border-gray-400 h-[2rem]" />
+          </div>
+          <div class="flex flex-col space-y-1">
+            <label for="country">Country</label>
+            <input {{if .Data.Country}} value={{.Data.Country}} {{end}} id="country" name="country" type="text"
+              class="px-2 rounded border border-gray-400 h-[2rem]" />
+          </div>
+          <div class="flex flex-col space-y-1">
+            <label for="assetserial">Asset Serial</label>
+            <input {{if .Data.AssetSerial}} value={{.Data.AssetSerial}} {{end}} id="assetserial" name="assetserial"
+              type="text" class="px-2 rounded border border-gray-400 h-[2rem]" />
+          </div>
+          <div class="flex flex-col space-y-1">
+            <label for="assettype">Asset Type</label>
+            <select id="assettype" name="assettype" class="px-2 rounded-md border border-gray-400 h-[2rem]">
+              <option {{if eq .Data.AssetType "Mac" }} selected="selected" {{end}} value="Mac">Mac</option>
+              <option {{if eq .Data.AssetType "Laptop" }} selected="selected" {{end}} value="Laptop">Laptop</option>
+              <option {{if eq .Data.AssetType "Desktop" }} selected="selected" {{end}} value="Desktop">Desktop</option>
+            </select>
+          </div>
+          <div class="flex flex-col space-y-1">
+            <label for="expirationdate">Expiration Date</label>
+            <input id="expirationdate" {{if .Data.ExpirationDate}} value={{.Data.ExpirationDate}} {{end}}
+              name="expirationdate" type="date" class="px-2 rounded-md border border-gray-400 h-[2rem]" />
+          </div>
         </div>
-        <div class="flex flex-col space-y-1">
-          <label for="serial">Serial</label>
-          <input value={{.Serial}} id="serial" name="serial" type="text"
-            class="px-2 rounded border border-gray-400 h-[2rem]" />
+        <div class="flex flex-row px-4 space-x-4">
+          <button type="submit" class="py-2 px-4 text-white bg-blue-500 rounded-md hover:bg-blue-700">
+            Save
+          </button>
+          <button hx-get="/" hx-swap="delete" hx-target="#insert-modal"
+            class="py-2 px-4 text-white bg-gray-500 rounded-md hover:bg-gray-700">
+            Cancel
+          </button>
         </div>
-        <div class="flex flex-col space-y-1">
-          <label for="email">Email</label>
-          <input value={{.Email}} id="email" name="email" type="text"
-            class="px-2 rounded border border-gray-400 h-[2rem]" />
-        </div>
-        <div class="flex flex-col space-y-1">
-          <label for="country">Country</label>
-          <input value={{.Country}} id="country" name="country" type="text"
-            class="px-2 rounded border border-gray-400 h-[2rem]" />
-        </div>
-        <div class="flex flex-col space-y-1">
-          <label for="assetserial">Asset Serial</label>
-          <input value={{.AssetSerial}} id="assetserial" name="assetserial" type="text"
-            class="px-2 rounded border border-gray-400 h-[2rem]" />
-        </div>
-        <div class="flex flex-col space-y-1">
-          <label for="assettype">Asset Type</label>
-          <select id="assettype" name="assettype" class="px-2 rounded-md border border-gray-400 h-[2rem]">
-            <option {{if eq .AssetType "Mac" }}selected="selected" {{end}} value="Mac">Mac</option>
-            <option {{if eq .AssetType "Laptop" }}selected="selected" {{end}} value="Laptop">Laptop</option>
-            <option {{if eq .AssetType "Desktop" }}selected="selected" {{end}} value="Desktop">Desktop</option>
-          </select>
-        </div>
-        <div class="flex flex-col space-y-1">
-          <label for="expirationdate">Expiration Date</label>
-
-          <input id="expirationdate" value={{.ExpirationDate}} name="expirationdate" type="date"
-            class="px-2 rounded-md border border-gray-400 h-[2rem]" />
-        </div>
-      </div>
-      <div class="flex flex-row px-4 space-x-4">
-        <button type="submit" class="py-2 px-4 text-white bg-blue-500 rounded-md">Save</button>
-        <button hx-get="/" hx-swap="delete" hx-target="#insert-modal"
-          class="py-2 px-4 text-white bg-gray-500 rounded-md">
-          Cancel
-        </button>
-      </div>
-    </form>
+      </form>
   </modal>
 </div>
