@@ -111,6 +111,21 @@ func CreateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func ViewHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "GET" {
+		vars := mux.Vars(r)
+		id := vars["id"]
+
+		for _, asset := range payload {
+			if asset.AssetSerial == id {
+				tmpl := template.Must(template.ParseFiles("../view.html"))
+				tmpl.Execute(w, asset)
+				break
+			}
+		}
+	}
+}
+
 func main() {
 	data, err := os.ReadFile("../data.json")
 	if err != nil {
@@ -127,6 +142,7 @@ func main() {
 	router.HandleFunc("/assets/new", NewHandler)
 	router.HandleFunc("/assets/create", CreateHandler)
 	router.HandleFunc("/assets/{id}", DeleteHandler)
+	router.HandleFunc("/assets/{id}/view", ViewHandler)
 	router.HandleFunc("/assets/{id}/edit", EditHandler)
 	router.HandleFunc("/assets/{id}/update", UpdateHandler)
 
